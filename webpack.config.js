@@ -31,7 +31,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'LCJS Trading Chart'
+            title: 'LCJS rendering speed showcase'
         })
     ]
 }
