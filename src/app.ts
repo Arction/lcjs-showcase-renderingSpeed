@@ -10,6 +10,7 @@ createProgressiveTraceGenerator()
     .toPromise()
     .then((generatedData) => {
         data = generatedData
+        indicatorRenderingSpeed.setText('Rendering ...')
         measureRenderingSpeed()
     })
 
