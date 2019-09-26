@@ -33,6 +33,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'LCJS rendering speed showcase',
             template: './src/index.html'
-        })
+        }),
+        new CopyWebpackPlugin([
+            { from: './README.md' }
+        ])
     ]
 }
