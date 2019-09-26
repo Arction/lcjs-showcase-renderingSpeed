@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const path = require('path')
 
 module.exports = {
@@ -33,6 +34,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'LCJS rendering speed showcase',
             template: './src/index.html'
-        })
+        }),
+        new CopyWebpackPlugin([
+            { from: 'src/GitHub-Mark-White-32px.png' }
+        ])
     ]
 }
