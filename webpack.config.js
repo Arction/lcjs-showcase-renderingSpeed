@@ -31,7 +31,8 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'LCJS rendering speed showcase'
+            title: 'LCJS rendering speed showcase',
+            template: './src/index.html'
         })
     ]
 }
