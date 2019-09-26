@@ -4,6 +4,12 @@ Web-application that generators random data in great quantity, and renders it us
 
 More information about LightningChart<sup>&#174;</sup> JS can be found from our website, https://www.arction.com/lightningchart-js/.
 
+## Description
+
+Measuring the time (in milliseconds) required to create a Cartesian Chart, and render a LineSeries with one million data-points.
+
+Result is shown on Chart.
+
 ## Getting Started
 
 The application is hosted at:
