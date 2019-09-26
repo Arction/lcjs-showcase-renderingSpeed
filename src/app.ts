@@ -77,7 +77,7 @@ axisY.onScaleChange( repositionIndicator )
 // Rendering speed indicator.
 const indicatorRenderingSpeedPrefix = `Rendering speed (${dataAmount} data-points)`
 const indicatorRenderingSpeed = indicatorLayout.addElement( UIElementBuilders.TextBox )
-    .setText( `${indicatorRenderingSpeedPrefix}: ...` )
+    .setText( `Generating test data` )
     .setFont(( font ) => font
         .setWeight( 'bold' )
     )
