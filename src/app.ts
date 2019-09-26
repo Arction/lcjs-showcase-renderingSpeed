@@ -14,7 +14,9 @@ createProgressiveTraceGenerator()
     })
 
 // Create Chart.
-const chart = lightningChart().ChartXY()
+const chart = lightningChart().ChartXY({
+    containerId: 'chart-container'
+})
     // Hide title.
     .setTitleFillStyle( emptyFill )
     // Minimize paddings.

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #chart-container {
+            width: 100%;
+            height: 100%;
+        }
+        #github-link {
+            position: fixed;
+            display: block;
+            top: 0px;
+            width: 100%;
+            margin-left: auto;
+        }
+        #github-link-image {
+            display: block;
+            margin-left: auto;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        .grow { transition: all .2s ease-in-out; }
+        .grow:hover { transform: scale(1.2); }
+    </style>
+  </head>
+  <body>
+    <div
+        id='chart-container'
+    ></div>
+    <a id="github-link" href="https://github.com/Arction/lcjs-showcase-renderingSpeed">
+      <img id="github-link-image" class="grow" src="./GitHub-Mark-White-32px.png"/>
+    </a>
+  </body>
+</html>
