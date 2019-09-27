@@ -12,8 +12,11 @@ const build = function () {
                 reject( err )
             
             let md = buffer.toString()
+            // Grab very first line of markdown as "Title".
+            const title = md.split('\n')[0]
+
             // Filter everything out except "Description" chapter.
-            md = getChapterFromMarkdown(
+            md = title + '\n' + getChapterFromMarkdown(
                 md,
                 /^#+\s+Description/,
             )
