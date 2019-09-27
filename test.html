@@ -1,0 +1,105 @@
+<html>
+    <body>
+        <div class="js-example-container">
+            <a href="https://arction.github.io/lcjs-showcase-trading/" id="showcase-1" class="js-example-item">item 1</a>
+            <a href="https://arction.github.io/lcjs-showcase-streamingData/" id="showcase-2" class="js-example-item gray-bg">item 2</a>
+            <a href="https://arction.github.io/lcjs-showcase-renderingSpeed/" id="showcase-3" class="js-example-item"> item 3</a>
+          </div>
+          <div class"js-content-active">
+            <div class="js-example-container">
+                <iframe id="js-example-chart" class="js-section" src=""></iframe>
+                <div id="js-example-description" class="item-info">
+                    Title and description
+                </div>
+            </div>
+          </div>
+          <script type='text/javascript'>
+            var showcaseItemIDs = [
+                "showcase-1",
+                "showcase-2",
+                "showcase-3"
+            ];
+            var showcaseURLs = [
+                "https://arction.github.io/lcjs-showcase-trading",
+                "https://arction.github.io/lcjs-showcase-streamingData",
+                "https://arction.github.io/lcjs-showcase-renderingSpeed"
+            ];
+            var showcaseItems = showcaseItemIDs.map(function( id ) {
+                return document.getElementById( id );
+            });
+            var jsExampleChart = document.getElementById( 'js-example-chart' );
+            var jsExampleDescription = document.getElementById( 'js-example-description' )
+            var activeShowcase = undefined
+            var activateShowcase = function( i ) {
+              if ( activeShowcase === i ) {
+                return
+              }
+              if ( i === undefined ) {
+                // Clear showcase.
+                jsExampleChart.src = "";
+                jsExampleDescription.innerHTML = "";
+              } else {
+                // Set URLs to hovered showcase.
+                jsExampleChart.src = showcaseURLs[ i ] + '/index.html';
+                // Markdown file needs to be read into text, so HTTP request is necessary.
+                const httpRequest = new XMLHttpRequest();
+                const descriptionURL = showcaseURLs[ i ] + '/description.md'
+                httpRequest.open( "GET", descriptionURL, true );
+                httpRequest.onreadystatechange = function() {
+                    // Check 1. Document is ready to be parsed, and 2. File exists.
+                    if ( httpRequest.readyState === 4 && httpRequest.status === 200 ) {
+                        const readme = httpRequest.responseText;
+                        jsExampleDescription.innerHTML = readme;
+                    }
+                }
+                httpRequest.send();
+              }
+              activeShowcase = i;
+            }
+            // Activate first showcase item by default.
+            activateShowcase( 0 )
+            // Listen to mouse-events for toggling showcase items.
+            showcaseItems.forEach(function( item, i ) {
+                item.addEventListener( 'mouseenter', function() {
+                  activateShowcase( i )
+                })
+            })
+          </script>
+          <style>
+            .js-example-container{
+                display:flex;
+                justify-content:row;
+                flex-wrap: nowrap;
+                width:100%;
+            }
+            .js-example-item{
+                width:34%;
+                min-height:400px;
+                background:#ccc;
+                display:block;
+            }
+            .gray-bg{
+                background:#b8b5b5;
+            }
+            .js-section{
+                width:50%;
+                min-height:450px;
+            }
+            
+            .item-info{
+                width:50%;
+                background:#454545;
+                color:#fff;
+                padding:40px;
+            }
+            .js-example-container a{
+                color:#fff;
+                padding:40px;
+            }
+            
+            .Chart{
+                height:100%;
+            }
+          </style>
+    </body>
+</html>
