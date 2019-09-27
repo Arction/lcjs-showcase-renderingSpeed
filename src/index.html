@@ -25,6 +25,7 @@
             margin-top: 10px;
             margin-right: 10px;
         }
+        .hidden { width: 0px; height: 0px; }
         .grow { transition: all .2s ease-in-out; }
         .grow:hover { transform: scale(1.2); }
     </style>
@@ -36,5 +37,13 @@
     <a id="github-link" href="https://github.com/Arction/lcjs-showcase-renderingSpeed">
       <img id="github-link-image" class="grow" src="./GitHub-Mark-White-32px.png"/>
     </a>
+    <script type="text/javascript">
+        // Hide Github link if we think we are inside an iframe.
+        if ( window !== window.top ) {
+            // Inside iframe.
+            const githubLinkImage = document.getElementById( 'github-link-image' )
+            githubLinkImage.className += ' hidden'
+        }
+    </script>
   </body>
 </html>
