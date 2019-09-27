@@ -1,7 +1,7 @@
 import { lightningChart, emptyFill, DataPatterns, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, ColorHEX, emptyLine, UIElementBuilders } from "@arction/lcjs"
 import { createProgressiveTraceGenerator } from "@arction/xydata"
 
-const dataAmount = 1.0 * 1000 * 1000
+const dataAmount = 1 * 1000 * 1000
 // Generate random data using 'xydata' library.
 let data: Point[]
 createProgressiveTraceGenerator()
@@ -10,7 +10,6 @@ createProgressiveTraceGenerator()
     .toPromise()
     .then((generatedData) => {
         data = generatedData
-        indicatorRenderingSpeed.setText('Rendering ...')
         measureRenderingSpeed()
     })
 
@@ -44,6 +43,7 @@ const measureRenderingSpeed = () => {
     requestAnimationFrame(() => {
         // Show chart.
         container.style.width = '100%'
+        indicatorRenderingSpeed.setText('Rendering ...')
 
         // Measure time required to render supplied data.
         const tStart = window.performance.now()
@@ -62,7 +62,7 @@ const measureRenderingSpeed = () => {
 
 // Create indicator for displaying rendering speed.
 const indicatorLayout = chart.addUIElement(
-    UILayoutBuilders.Row
+    UILayoutBuilders.Column
         .setBackground( UIBackgrounds.Rectangle ),
     // Position UIElement with Axis coordinates.
     {
@@ -86,7 +86,21 @@ axisY.onScaleChange( repositionIndicator )
 // Rendering speed indicator.
 const indicatorRenderingSpeedPrefix = `Rendering speed (${dataAmount} data-points)`
 const indicatorRenderingSpeed = indicatorLayout.addElement( UIElementBuilders.TextBox )
-    .setText( `Generating test data` )
+    .setText( 'Rendering ...' )
     .setFont(( font ) => font
         .setWeight( 'bold' )
     )
+
+// Create button for rendering and measuring again.
+const reRender = () => {
+    series
+        .clear()
+    indicatorRenderingSpeed
+        .setText( 'Rendering ...' )
+
+    measureRenderingSpeed()
+}
+const buttonRerender = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
+    .setText( 'Render again' )
+    .setMargin({ left: 10 })
+buttonRerender.onSwitch((_, state) => state ? reRender() : undefined)
