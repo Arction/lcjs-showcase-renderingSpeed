@@ -6,7 +6,7 @@ More information about LightningChart<sup>&#174;</sup> JS can be found from our 
 
 ## Description
 
-Measures the time (in milliseconds) required to create a Cartesian Chart and render a LineSeries with one million data-points.
+Measures the time (in milliseconds) required to render a LineSeries with one million data-points.
 
 Result is shown on Chart.
 
