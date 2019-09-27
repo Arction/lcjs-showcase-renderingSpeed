@@ -1,4 +1,4 @@
-# LightningChart<sup>&#174;</sup>JS Rendering speed showcase application
+# LightningChart JS Rendering speed showcase application
 
 Web-application that generators random data in great quantity, and renders it using LightningChart JS - measuring the time needed.
 
