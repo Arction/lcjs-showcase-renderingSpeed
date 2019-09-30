@@ -1,17 +1,36 @@
 import { lightningChart, emptyFill, DataPatterns, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, ColorHEX, emptyLine, UIElementBuilders } from "@arction/lcjs"
 import { createProgressiveTraceGenerator } from "@arction/xydata"
 
-const dataAmount = 1 * 1000 * 1000
+let dataAmount = 1 * 1000 * 1000
+
 // Generate random data using 'xydata' library.
 let data: Point[]
-createProgressiveTraceGenerator()
-    .setNumberOfPoints( dataAmount + 1 )
-    .generate()
-    .toPromise()
-    .then((generatedData) => {
-        data = generatedData
-        measureRenderingSpeed()
+const generateData = ( amount: number, after: () => void ) => {
+    createProgressiveTraceGenerator()
+        .setNumberOfPoints( amount + 1 )
+        .generate()
+        .toPromise()
+        .then((generatedData) => {
+            data = generatedData
+            after()
+        })
+}
+generateData( dataAmount, () => {
+    measureRenderingSpeed()
+    // Start loading 10 M data before hand, after rendering initial data.
+    requestAnimationFrame(() => {
+        generateData( 10 * 1000 * 1000, () => {
+            buttonRender10M
+                .setText( 'Render 10M' )
+                .onSwitch((_, state) => {
+                    if ( state ) {
+                        dataAmount = 10 * 1000 * 1000
+                        reRender()
+                    }
+                })
+        } )
     })
+} )
 
 // Create Chart.
 const containerId = 'chart-container'
@@ -48,14 +67,15 @@ const measureRenderingSpeed = () => {
         // Measure time required to render supplied data.
         const tStart = window.performance.now()
     
-        series.add( data )
+        const dataN = data.slice( 0, dataAmount )
+        series.add( dataN )
     
         // Subscribe to next animation frame to know how long it took to render.
         requestAnimationFrame(() => {
             const tNow = window.performance.now()
             const delay = tNow - tStart
             // Display result using UI indicator.
-            indicatorRenderingSpeed.setText(`${indicatorRenderingSpeedPrefix}: ${delay.toFixed(0)} ms`)
+            indicatorRenderingSpeed.setText(`Rendering speed (${(dataAmount / (1 * 1000 * 1000)).toFixed(1)}M data-points): ${delay.toFixed(0)} ms`)
         })
     })
 }
@@ -84,7 +104,6 @@ repositionIndicator()
 axisX.onScaleChange( repositionIndicator )
 axisY.onScaleChange( repositionIndicator )
 // Rendering speed indicator.
-const indicatorRenderingSpeedPrefix = `Rendering speed (${dataAmount} data-points)`
 const indicatorRenderingSpeed = indicatorLayout.addElement( UIElementBuilders.TextBox )
     .setText( 'Rendering ...' )
     .setFont(( font ) => font
@@ -100,7 +119,15 @@ const reRender = () => {
 
     measureRenderingSpeed()
 }
-const buttonRerender = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
-    .setText( 'Render again' )
+const buttonRender1M = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
+    .setText( 'Render 1M' )
     .setMargin({ left: 10 })
-buttonRerender.onSwitch((_, state) => state ? reRender() : undefined)
+buttonRender1M.onSwitch((_, state) => {
+    if ( state ) {
+        dataAmount = 1 * 1000 * 1000
+        reRender()
+    }
+})
+const buttonRender10M = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
+    .setText( 'Generating 10M data on background...' )
+    .setMargin({ left: 10 })
