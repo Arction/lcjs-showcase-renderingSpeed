@@ -54,8 +54,7 @@ const measureRenderingSpeed = () => {
         // Measure time required to render supplied data.
         const tStart = window.performance.now()
     
-        const dataN = data.slice( 0, dataAmount )
-        series.add( dataN )
+        series.add( data )
     
         // Subscribe to next animation frame to know how long it took to render.
         requestAnimationFrame(() => {
@@ -106,36 +105,11 @@ const reRender = () => {
 
     measureRenderingSpeed()
 }
-const buttonRender1M = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
-    .setText( 'Render 1M' )
+const buttonRerender = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
+    .setText( 'Render again' )
     .setMargin({ left: 10 })
-buttonRender1M.onSwitch((_, state) => {
+buttonRerender.onSwitch((_, state) => {
     if ( state ) {
-        dataAmount = 1 * 1000 * 1000
         reRender()
-    }
-})
-const buttonRender10M = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
-    .setText( 'Render 10M' )
-    .setMargin({ left: 10 })
-let generating10M = false
-buttonRender10M.onSwitch((_, state) => {
-    if ( state && !generating10M ) {
-        // Generate 10M data.
-        generating10M = true
-        buttonRender10M.setText('Generating 10M random data-points...')
-        generateData( 10 * 1000 * 1000, () => {
-            dataAmount = 10 * 1000 * 1000
-            reRender()
-
-            buttonRender10M
-                .setText( 'Render 10M' )
-                .onSwitch((_, state) => {
-                    if ( state ) {
-                        dataAmount = 10 * 1000 * 1000
-                        reRender()
-                    }
-                })
-        } )
     }
 })
