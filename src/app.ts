@@ -17,19 +17,6 @@ const generateData = ( amount: number, after: () => void ) => {
 }
 generateData( dataAmount, () => {
     measureRenderingSpeed()
-    // Start loading 10 M data before hand, after rendering initial data.
-    requestAnimationFrame(() => {
-        generateData( 10 * 1000 * 1000, () => {
-            buttonRender10M
-                .setText( 'Render 10M' )
-                .onSwitch((_, state) => {
-                    if ( state ) {
-                        dataAmount = 10 * 1000 * 1000
-                        reRender()
-                    }
-                })
-        } )
-    })
 } )
 
 // Create Chart.
@@ -129,5 +116,26 @@ buttonRender1M.onSwitch((_, state) => {
     }
 })
 const buttonRender10M = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
-    .setText( 'Generating 10M data on background...' )
+    .setText( 'Render 10M' )
     .setMargin({ left: 10 })
+let generating10M = false
+buttonRender10M.onSwitch((_, state) => {
+    if ( state && !generating10M ) {
+        // Generate 10M data.
+        generating10M = true
+        buttonRender10M.setText('Generating 10M random data-points...')
+        generateData( 10 * 1000 * 1000, () => {
+            dataAmount = 10 * 1000 * 1000
+            reRender()
+
+            buttonRender10M
+                .setText( 'Render 10M' )
+                .onSwitch((_, state) => {
+                    if ( state ) {
+                        dataAmount = 10 * 1000 * 1000
+                        reRender()
+                    }
+                })
+        } )
+    }
+})
