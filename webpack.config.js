@@ -5,8 +5,8 @@ const path = require('path')
 module.exports = {
     mode: 'development',
     entry: './src/app.ts',
-    module:{
-        rules:[
+    module: {
+        rules: [
             {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
@@ -25,7 +25,7 @@ module.exports = {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist')
     },
-    optimization:{
+    optimization: {
         splitChunks: {
             chunks: 'all'
         }
@@ -36,7 +36,7 @@ module.exports = {
             template: './src/index.html'
         }),
         new CopyWebpackPlugin([
-            { from: 'src/GitHub-Mark-White-32px.png' }
+            { from: 'src/static', to: '' }
         ])
     ]
 }
