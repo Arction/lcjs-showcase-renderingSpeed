@@ -1,5 +1,11 @@
-import { lightningChart, emptyFill, DataPatterns, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, ColorHEX, emptyLine, UIElementBuilders } from "@arction/lcjs"
+import { lightningChart, emptyFill, DataPatterns, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, ColorHEX, emptyLine, UIElementBuilders, Themes } from "@arction/lcjs"
 import { createProgressiveTraceGenerator } from "@arction/xydata"
+
+// Use theme if provided
+const urlParams = new URLSearchParams(window.location.search);
+let theme = Themes.dark
+if (urlParams.get('theme') == 'light')
+    theme = Themes.light
 
 let dataAmount = 1 * 1000 * 1000
 
@@ -22,6 +28,7 @@ generateData( dataAmount, () => {
 // Create Chart.
 const containerId = 'chart-container'
 const chart = lightningChart().ChartXY({
+    theme,
     containerId
 })
     // Hide title.
@@ -80,7 +87,7 @@ const indicatorLayout = chart.addUIElement(
     .setDraggingMode( UIDraggingModes.notDraggable )
     // Set dark, tinted Background style.
     .setBackground(( background ) => background
-        .setFillStyle( new SolidFill({ color: ColorHEX('#000').setA(150) }) )
+        .setFillStyle( new SolidFill({ color: theme.chartBackgroundFillStyle.get('color').setA(150) }) )
         .setStrokeStyle( emptyLine )
     )
 // Reposition indicators whenever Axis scale is changed (to keep position static).
