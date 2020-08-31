@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "copy-webpack-plugin": "^5.1.1",
+    "copy-webpack-plugin": "^6.0.4",
     "gh-pages": "^2.2.0",
     "gulp": "^4.0.2",
     "html-webpack-plugin": "^4.2.0",
@@ -21,7 +21,7 @@
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "@arction/lcjs": "^1.2.2",
