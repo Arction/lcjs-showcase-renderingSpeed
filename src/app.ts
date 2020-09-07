@@ -25,11 +25,11 @@ generateData( dataAmount, () => {
     measureRenderingSpeed()
 } )
 
+const container = document.getElementById( 'chart-container' ) as HTMLDivElement
 // Create Chart.
-const containerId = 'chart-container'
 const chart = lightningChart().ChartXY({
     theme,
-    containerId
+    container
 })
     // Hide title.
     .setTitleFillStyle( emptyFill )
@@ -37,7 +37,6 @@ const chart = lightningChart().ChartXY({
     .setPadding({ left: 0, bottom: 0, right: 30, top: 10 })
 
 // Hide Chart with CSS until data is ready for rendering.
-const container = document.getElementById( containerId )
 container.style.width = '0'
 
 // Disable scrolling animations to view loaded data instantly.
