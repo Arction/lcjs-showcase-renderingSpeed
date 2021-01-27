@@ -1,4 +1,4 @@
-import { lightningChart, emptyFill, DataPatterns, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, ColorHEX, emptyLine, UIElementBuilders, Themes } from "@arction/lcjs"
+import { lightningChart, emptyFill, DataPatterns, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, ColorHEX, emptyLine, UIElementBuilders, Themes, UIRectangle, UIElementColumn, UITextBox, UICheckBox } from "@arction/lcjs"
 import { createProgressiveTraceGenerator } from "@arction/xydata"
 
 // Use theme if provided
@@ -73,7 +73,7 @@ const measureRenderingSpeed = () => {
 }
 
 // Create indicator for displaying rendering speed.
-const indicatorLayout = chart.addUIElement(
+const indicatorLayout = chart.addUIElement<UIElementColumn<UIRectangle>>(
     UILayoutBuilders.Column
         .setBackground( UIBackgrounds.Rectangle ),
     // Position UIElement with Axis coordinates.
@@ -96,7 +96,7 @@ repositionIndicator()
 axisX.onScaleChange( repositionIndicator )
 axisY.onScaleChange( repositionIndicator )
 // Rendering speed indicator.
-const indicatorRenderingSpeed = indicatorLayout.addElement( UIElementBuilders.TextBox )
+const indicatorRenderingSpeed = indicatorLayout.addElement<UITextBox<UIRectangle>>( UIElementBuilders.TextBox )
     .setText( 'Rendering ...' )
     .setFont(( font ) => font
         .setWeight( 'bold' )
@@ -111,7 +111,7 @@ const reRender = () => {
 
     measureRenderingSpeed()
 }
-const buttonRerender = indicatorLayout.addElement( UIElementBuilders.ButtonBox )
+const buttonRerender = indicatorLayout.addElement<UICheckBox<UIRectangle>>( UIElementBuilders.ButtonBox )
     .setText( 'Render again' )
     .setMargin({ left: 10 })
 buttonRerender.onSwitch((_, state) => {
