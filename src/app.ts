@@ -1,4 +1,4 @@
-import { lightningChart, emptyFill, DataPatterns, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, ColorHEX, emptyLine, UIElementBuilders, Themes, UIRectangle, UIElementColumn, UITextBox, UICheckBox } from "@arction/lcjs"
+import { lightningChart, emptyFill, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, emptyLine, UIElementBuilders, Themes, UIRectangle, UIElementColumn, UITextBox, UICheckBox } from "@arction/lcjs"
 import { createProgressiveTraceGenerator } from "@arction/xydata"
 
 // Use theme if provided
@@ -11,9 +11,9 @@ let dataAmount = 1 * 1000 * 1000
 
 // Generate random data using 'xydata' library.
 let data: Point[]
-const generateData = ( amount: number, after: () => void ) => {
+const generateData = (amount: number, after: () => void) => {
     createProgressiveTraceGenerator()
-        .setNumberOfPoints( amount + 1 )
+        .setNumberOfPoints(amount + 1)
         .generate()
         .toPromise()
         .then((generatedData) => {
@@ -21,18 +21,18 @@ const generateData = ( amount: number, after: () => void ) => {
             after()
         })
 }
-generateData( dataAmount, () => {
+generateData(dataAmount, () => {
     measureRenderingSpeed()
-} )
+})
 
-const container = document.getElementById( 'chart-container' ) as HTMLDivElement
+const container = document.getElementById('chart-container') as HTMLDivElement
 // Create Chart.
 const chart = lightningChart().ChartXY({
     theme,
     container
 })
     // Hide title.
-    .setTitleFillStyle( emptyFill )
+    .setTitleFillStyle(emptyFill)
     // Minimize paddings.
     .setPadding({ left: 0, bottom: 0, right: 30, top: 10 })
 
@@ -41,13 +41,15 @@ container.style.width = '0'
 
 // Disable scrolling animations to view loaded data instantly.
 const axisX = chart.getDefaultAxisX()
-    .setAnimationScroll( undefined )
+    .setAnimationScroll(undefined)
 const axisY = chart.getDefaultAxisY()
-    .setAnimationScroll( undefined )
+    .setAnimationScroll(undefined)
 
 const series = chart.addLineSeries({
     // Specifying progressive DataPattern enables some otherwise unusable optimizations.
-    dataPattern: DataPatterns.horizontalProgressive
+    dataPattern: {
+        pattern: 'ProgressiveX'
+    }
 })
 
 const measureRenderingSpeed = () => {
@@ -59,9 +61,9 @@ const measureRenderingSpeed = () => {
 
         // Measure time required to render supplied data.
         const tStart = window.performance.now()
-    
-        series.add( data )
-    
+
+        series.add(data)
+
         // Subscribe to next animation frame to know how long it took to render.
         requestAnimationFrame(() => {
             const tNow = window.performance.now()
@@ -75,31 +77,31 @@ const measureRenderingSpeed = () => {
 // Create indicator for displaying rendering speed.
 const indicatorLayout = chart.addUIElement<UIElementColumn<UIRectangle>>(
     UILayoutBuilders.Column
-        .setBackground( UIBackgrounds.Rectangle ),
+        .setBackground(UIBackgrounds.Rectangle),
     // Position UIElement with Axis coordinates.
     {
-        x: axisX.scale,
-        y: axisY.scale
+        x: axisX,
+        y: axisY
     }
 )
-    .setOrigin( UIOrigins.LeftTop )
-    .setDraggingMode( UIDraggingModes.notDraggable )
+    .setOrigin(UIOrigins.LeftTop)
+    .setDraggingMode(UIDraggingModes.notDraggable)
     // Set dark, tinted Background style.
-    .setBackground(( background ) => background
-        .setFillStyle( new SolidFill({ color: theme.chartBackgroundFillStyle.get('color').setA(150) }) )
-        .setStrokeStyle( emptyLine )
+    .setBackground((background) => background
+        .setFillStyle(new SolidFill({ color: theme.seriesBackgroundFillStyle.get('color').setA(150) }))
+        .setStrokeStyle(emptyLine)
     )
 // Reposition indicators whenever Axis scale is changed (to keep position static).
 const repositionIndicator = () =>
-    indicatorLayout.setPosition({ x: axisX.scale.getInnerStart(), y: axisY.scale.getInnerEnd() })
+    indicatorLayout.setPosition({ x: axisX.getInterval().start, y: axisY.getInterval().end })
 repositionIndicator()
-axisX.onScaleChange( repositionIndicator )
-axisY.onScaleChange( repositionIndicator )
+axisX.onScaleChange(repositionIndicator)
+axisY.onScaleChange(repositionIndicator)
 // Rendering speed indicator.
-const indicatorRenderingSpeed = indicatorLayout.addElement<UITextBox<UIRectangle>>( UIElementBuilders.TextBox )
-    .setText( 'Rendering ...' )
-    .setFont(( font ) => font
-        .setWeight( 'bold' )
+const indicatorRenderingSpeed = indicatorLayout.addElement<UITextBox<UIRectangle>>(UIElementBuilders.TextBox)
+    .setText('Rendering ...')
+    .setTextFont((font) => font
+        .setWeight('bold')
     )
 
 // Create button for rendering and measuring again.
@@ -107,15 +109,15 @@ const reRender = () => {
     series
         .clear()
     indicatorRenderingSpeed
-        .setText( 'Rendering ...' )
+        .setText('Rendering ...')
 
     measureRenderingSpeed()
 }
-const buttonRerender = indicatorLayout.addElement<UICheckBox<UIRectangle>>( UIElementBuilders.ButtonBox )
-    .setText( 'Render again' )
+const buttonRerender = indicatorLayout.addElement<UICheckBox<UIRectangle>>(UIElementBuilders.ButtonBox)
+    .setText('Render again')
     .setMargin({ left: 10 })
 buttonRerender.onSwitch((_, state) => {
-    if ( state ) {
+    if (state) {
         reRender()
     }
 })
