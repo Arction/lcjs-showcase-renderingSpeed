@@ -24,7 +24,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@arction/lcjs": "^3.0.0",
+    "@arction/lcjs": "^3.1.0",
     "@arction/xydata": "^1.4.0"
   }
 }
