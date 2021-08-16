@@ -3,9 +3,9 @@ import { createProgressiveTraceGenerator } from "@arction/xydata"
 
 // Use theme if provided
 const urlParams = new URLSearchParams(window.location.search);
-let theme = Themes.dark
+let theme = Themes.darkGold
 if (urlParams.get('theme') == 'light')
-    theme = Themes.light
+    theme = Themes.lightNew
 
 let dataAmount = 1 * 1000 * 1000
 
@@ -69,7 +69,7 @@ const measureRenderingSpeed = () => {
             const tNow = window.performance.now()
             const delay = tNow - tStart
             // Display result using UI indicator.
-            indicatorRenderingSpeed.setText(`Rendering speed (${(dataAmount / (1 * 1000 * 1000)).toFixed(1)}M data-points): ${delay.toFixed(0)} ms`)
+            indicatorRenderingSpeed.setText(`${(delay / 1000).toFixed(3)} seconds`)
         })
     })
 }
@@ -86,20 +86,19 @@ const indicatorLayout = chart.addUIElement<UIElementColumn<UIRectangle>>(
 )
     .setOrigin(UIOrigins.LeftTop)
     .setDraggingMode(UIDraggingModes.notDraggable)
-    // Set dark, tinted Background style.
-    .setBackground((background) => background
-        .setFillStyle(new SolidFill({ color: theme.seriesBackgroundFillStyle.get('color').setA(150) }))
-        .setStrokeStyle(emptyLine)
-    )
+
 // Reposition indicators whenever Axis scale is changed (to keep position static).
 const repositionIndicator = () =>
     indicatorLayout.setPosition({ x: axisX.getInterval().start, y: axisY.getInterval().end })
 repositionIndicator()
 axisX.onScaleChange(repositionIndicator)
 axisY.onScaleChange(repositionIndicator)
+
+indicatorLayout.addElement<UITextBox>(UIElementBuilders.TextBox)
+    .setText(`Rendering speed ${(dataAmount / (1 * 1000 * 1000)).toFixed(1)} million data points:`)
+
 // Rendering speed indicator.
-const indicatorRenderingSpeed = indicatorLayout.addElement<UITextBox<UIRectangle>>(UIElementBuilders.TextBox)
-    .setText('Rendering ...')
+const indicatorRenderingSpeed = indicatorLayout.addElement<UITextBox>(UIElementBuilders.TextBox)
     .setTextFont((font) => font
         .setWeight('bold')
     )
