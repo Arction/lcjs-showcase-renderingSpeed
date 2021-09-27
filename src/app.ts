@@ -112,7 +112,7 @@ const reRender = () => {
 
     measureRenderingSpeed()
 }
-const buttonRerender = indicatorLayout.addElement<UICheckBox<UIRectangle>>(UIElementBuilders.ButtonBox)
+const buttonRerender = indicatorLayout.addElement(UIElementBuilders.ButtonBox)
     .setText('Render again')
     .setMargin({ left: 10 })
 buttonRerender.onSwitch((_, state) => {
