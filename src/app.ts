@@ -7,116 +7,81 @@ let theme = Themes.darkGold
 if (urlParams.get('theme') == 'light')
     theme = Themes.lightNew
 
-let dataAmount = 1 * 1000 * 1000
+const dataAmountNumber = 5 * 1000 * 1000
+const dataAmountString = `${dataAmountNumber / 10 ** 6}M`
 
-// Generate random data using 'xydata' library.
-let data: Point[]
-const generateData = (amount: number, after: () => void) => {
-    createProgressiveTraceGenerator()
-        .setNumberOfPoints(amount + 1)
-        .generate()
-        .toPromise()
-        .then((generatedData) => {
-            data = generatedData
-            after()
-        })
-}
-generateData(dataAmount, () => {
-    measureRenderingSpeed()
-})
-
-const container = document.getElementById('chart-container') as HTMLDivElement
-// Create Chart.
 const chart = lightningChart().ChartXY({
-    theme,
-    container
+    container: document.getElementById('chart-container') as HTMLDivElement,
+    theme
 })
-    // Hide title.
     .setTitleFillStyle(emptyFill)
-    // Minimize paddings.
-    .setPadding({ left: 0, bottom: 0, right: 30, top: 10 })
+    .setPadding({right: 40})
 
-// Hide Chart with CSS until data is ready for rendering.
-container.style.width = '0'
-
-// Disable scrolling animations to view loaded data instantly.
 const axisX = chart.getDefaultAxisX()
-    .setAnimationScroll(undefined)
 const axisY = chart.getDefaultAxisY()
-    .setAnimationScroll(undefined)
 
 const series = chart.addLineSeries({
-    // Specifying progressive DataPattern enables some otherwise unusable optimizations.
     dataPattern: {
-        pattern: 'ProgressiveX'
+        pattern: 'ProgressiveX',
+        regularProgressiveStep: true,
     }
 })
 
-const measureRenderingSpeed = () => {
-    // Sync with next animation frame for correct time measurement.
-    requestAnimationFrame(() => {
-        // Show chart.
-        container.style.width = '100%'
-        indicatorRenderingSpeed.setText('Rendering ...')
+const uiLayout = chart.addUIElement(UILayoutBuilders.Column, {x: axisX, y: axisY})
+    .setOrigin(UIOrigins.LeftTop)
 
-        // Measure time required to render supplied data.
-        const tStart = window.performance.now()
-
-        series.add(data)
-
-        // Subscribe to next animation frame to know how long it took to render.
-        requestAnimationFrame(() => {
-            const tNow = window.performance.now()
-            const delay = tNow - tStart
-            // Display result using UI indicator.
-            indicatorRenderingSpeed.setText(`${(delay / 1000).toFixed(3)} seconds`)
-        })
+const positionUiLayout = () => {
+    uiLayout.setPosition({
+        x: axisX.getInterval().start, 
+        y: axisY.getInterval().end
     })
 }
+positionUiLayout()
+axisX.onScaleChange(positionUiLayout)
+axisY.onScaleChange(positionUiLayout)
 
-// Create indicator for displaying rendering speed.
-const indicatorLayout = chart.addUIElement<UIElementColumn<UIRectangle>>(
-    UILayoutBuilders.Column
-        .setBackground(UIBackgrounds.Rectangle),
-    // Position UIElement with Axis coordinates.
-    {
-        x: axisX,
-        y: axisY
-    }
-)
-    .setOrigin(UIOrigins.LeftTop)
-    .setDraggingMode(UIDraggingModes.notDraggable)
+const labelGenerate = uiLayout.addElement(UIElementBuilders.TextBox).setText(`Generating ${dataAmountString} data points...`)
+const labelGenerateResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
+const labelAppend = uiLayout.addElement(UIElementBuilders.TextBox).setText(``)
+const labelAppendResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
+const labelRender = uiLayout.addElement(UIElementBuilders.TextBox).setText(``)
+const labelRenderResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
+const labelSubsequentRender = uiLayout.addElement(UIElementBuilders.TextBox).setText(``)
+const labelSubsequentRenderResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
 
-// Reposition indicators whenever Axis scale is changed (to keep position static).
-const repositionIndicator = () =>
-    indicatorLayout.setPosition({ x: axisX.getInterval().start, y: axisY.getInterval().end })
-repositionIndicator()
-axisX.onScaleChange(repositionIndicator)
-axisY.onScaleChange(repositionIndicator)
+const t0 = window.performance.now()
+createProgressiveTraceGenerator()
+    .setNumberOfPoints(dataAmountNumber)
+    .generate()
+    .toPromise()
+    .then(data => {
+        const t1 = window.performance.now()
+        const dGenerateData = t1 - t0
+        labelGenerate.setText(`Generate ${dataAmountString} data points`)
+        labelGenerateResult.setText(`${Math.round(dGenerateData)} ms`)
+        labelAppend.setText(`Append ${dataAmountString} data points`)
+        labelRender.setText(`Render first frame with data`)
 
-indicatorLayout.addElement<UITextBox>(UIElementBuilders.TextBox)
-    .setText(`Rendering speed ${(dataAmount / (1 * 1000 * 1000)).toFixed(1)} million data points:`)
+        requestAnimationFrame(() => {
+            const t2 = window.performance.now()
+            series.add(data)
+            axisX.fit(false)
+            axisY.fit(false)
+            const t3 = window.performance.now()
+            const dAppendData = t3 - t2
+            labelAppendResult.setText(`${Math.round(dAppendData)} ms`)
 
-// Rendering speed indicator.
-const indicatorRenderingSpeed = indicatorLayout.addElement<UITextBox>(UIElementBuilders.TextBox)
-    .setTextFont((font) => font
-        .setWeight('bold')
-    )
+            requestAnimationFrame(() => {
+                const t4 = window.performance.now()
+                const dRenderFrame = t4 - t3
+                labelRenderResult.setText(`${Math.round(dRenderFrame)} ms`)
 
-// Create button for rendering and measuring again.
-const reRender = () => {
-    series
-        .clear()
-    indicatorRenderingSpeed
-        .setText('Rendering ...')
-
-    measureRenderingSpeed()
-}
-const buttonRerender = indicatorLayout.addElement(UIElementBuilders.ButtonBox)
-    .setText('Render again')
-    .setMargin({ left: 10 })
-buttonRerender.onSwitch((_, state) => {
-    if (state) {
-        reRender()
-    }
-})
+                requestAnimationFrame(() => {
+                    const t5 = window.performance.now()
+                    const dRenderSubsequentFrame = t5 - t4
+                    labelSubsequentRender.setText(`Render subsequent frame`)
+                    labelSubsequentRenderResult.setText(`${Math.round(dRenderSubsequentFrame)} ms`)
+                })
+            })
+        })
+    })
