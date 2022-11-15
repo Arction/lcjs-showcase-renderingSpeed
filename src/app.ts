@@ -3,9 +3,7 @@ import { createProgressiveTraceGenerator } from "@arction/xydata"
 
 // Use theme if provided
 const urlParams = new URLSearchParams(window.location.search);
-let theme = Themes.darkGold
-if (urlParams.get('theme') == 'light')
-    theme = Themes.lightNew
+let theme = Themes[urlParams.get("theme")] || Themes.darkGold;
 
 const dataAmountNumber = 5 * 1000 * 1000
 const dataAmountString = `${dataAmountNumber / 10 ** 6}M`
