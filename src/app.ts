@@ -1,9 +1,9 @@
-import { lightningChart, emptyFill, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, emptyLine, UIElementBuilders, Themes, UIRectangle, UIElementColumn, UITextBox, UICheckBox } from "@arction/lcjs"
-import { createProgressiveTraceGenerator } from "@arction/xydata"
+import { emptyFill, lightningChart, Themes, UIElementBuilders, UILayoutBuilders, UIOrigins } from "@arction/lcjs";
+import { createProgressiveTraceGenerator } from "@arction/xydata";
 
 // Use theme if provided
 const urlParams = new URLSearchParams(window.location.search);
-let theme = Themes[urlParams.get("theme")] || Themes.darkGold;
+let theme = Themes[urlParams.get("theme") as keyof Themes] || Themes.darkGold;
 
 const dataAmountNumber = 5 * 1000 * 1000
 const dataAmountString = `${dataAmountNumber / 10 ** 6}M`
