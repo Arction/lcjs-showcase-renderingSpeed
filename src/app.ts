@@ -35,8 +35,8 @@ const positionUiLayout = () => {
     })
 }
 positionUiLayout()
-axisX.onScaleChange(positionUiLayout)
-axisY.onScaleChange(positionUiLayout)
+axisX.onIntervalChange(positionUiLayout)
+axisY.onIntervalChange(positionUiLayout)
 
 const labelGenerate = uiLayout.addElement(UIElementBuilders.TextBox).setText(`Generating ${dataAmountString} data points...`)
 const labelGenerateResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
