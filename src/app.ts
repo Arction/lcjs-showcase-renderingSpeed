@@ -1,4 +1,4 @@
-import { emptyFill, lightningChart, Themes, UIElementBuilders, UILayoutBuilders, UIOrigins } from "@arction/lcjs";
+import { disableThemeEffects, emptyFill, lightningChart, Themes, UIElementBuilders, UILayoutBuilders, UIOrigins } from "@arction/lcjs";
 import { createProgressiveTraceGenerator } from "@arction/xydata";
 
 // Use theme if provided
@@ -10,7 +10,8 @@ const dataAmountString = `${dataAmountNumber / 10 ** 6}M`
 
 const chart = lightningChart().ChartXY({
     container: document.getElementById('chart-container') as HTMLDivElement,
-    theme
+    // NOTE: Effects are implemented quite performantly, but regardless, best performance is got without them.
+    theme: disableThemeEffects(theme),
 })
     .setTitleFillStyle(emptyFill)
     .setPadding({right: 40})
