@@ -1,20 +1,21 @@
-import { disableThemeEffects, emptyFill, lightningChart, Themes, UIElementBuilders, UILayoutBuilders, UIOrigins } from "@arction/lcjs";
-import { createProgressiveTraceGenerator } from "@arction/xydata";
+import { disableThemeEffects, emptyFill, lightningChart, Themes, UIElementBuilders, UILayoutBuilders, UIOrigins } from '@arction/lcjs'
+import { createProgressiveTraceGenerator } from '@arction/xydata'
 
 // Use theme if provided
-const urlParams = new URLSearchParams(window.location.search);
-let theme = Themes[urlParams.get("theme") as keyof Themes] || Themes.darkGold;
+const urlParams = new URLSearchParams(window.location.search)
+let theme = Themes[urlParams.get('theme') as keyof Themes] || Themes.darkGold
 
 const dataAmountNumber = 5 * 1000 * 1000
 const dataAmountString = `${dataAmountNumber / 10 ** 6}M`
 
-const chart = lightningChart().ChartXY({
-    container: document.getElementById('chart-container') as HTMLDivElement,
-    // NOTE: Effects are implemented quite performantly, but regardless, best performance is got without them.
-    theme: disableThemeEffects(theme),
-})
+const chart = lightningChart()
+    .ChartXY({
+        container: document.getElementById('chart-container') as HTMLDivElement,
+        // NOTE: Effects are implemented quite performantly, but regardless, best performance is got without them.
+        theme: disableThemeEffects(theme),
+    })
     .setTitleFillStyle(emptyFill)
-    .setPadding({right: 40})
+    .setPadding({ right: 40 })
 
 const axisX = chart.getDefaultAxisX()
 const axisY = chart.getDefaultAxisY()
@@ -23,16 +24,15 @@ const series = chart.addLineSeries({
     dataPattern: {
         pattern: 'ProgressiveX',
         regularProgressiveStep: true,
-    }
+    },
 })
 
-const uiLayout = chart.addUIElement(UILayoutBuilders.Column, {x: axisX, y: axisY})
-    .setOrigin(UIOrigins.LeftTop)
+const uiLayout = chart.addUIElement(UILayoutBuilders.Column, { x: axisX, y: axisY }).setOrigin(UIOrigins.LeftTop)
 
 const positionUiLayout = () => {
     uiLayout.setPosition({
-        x: axisX.getInterval().start, 
-        y: axisY.getInterval().end
+        x: axisX.getInterval().start,
+        y: axisY.getInterval().end,
     })
 }
 positionUiLayout()
@@ -40,20 +40,32 @@ axisX.onIntervalChange(positionUiLayout)
 axisY.onIntervalChange(positionUiLayout)
 
 const labelGenerate = uiLayout.addElement(UIElementBuilders.TextBox).setText(`Generating ${dataAmountString} data points...`)
-const labelGenerateResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
+const labelGenerateResult = uiLayout
+    .addElement(UIElementBuilders.TextBox)
+    .setText(``)
+    .setTextFont((font) => font.setWeight('bold').setSize(12))
 const labelAppend = uiLayout.addElement(UIElementBuilders.TextBox).setText(``)
-const labelAppendResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
+const labelAppendResult = uiLayout
+    .addElement(UIElementBuilders.TextBox)
+    .setText(``)
+    .setTextFont((font) => font.setWeight('bold').setSize(12))
 const labelRender = uiLayout.addElement(UIElementBuilders.TextBox).setText(``)
-const labelRenderResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
+const labelRenderResult = uiLayout
+    .addElement(UIElementBuilders.TextBox)
+    .setText(``)
+    .setTextFont((font) => font.setWeight('bold').setSize(12))
 const labelSubsequentRender = uiLayout.addElement(UIElementBuilders.TextBox).setText(``)
-const labelSubsequentRenderResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
+const labelSubsequentRenderResult = uiLayout
+    .addElement(UIElementBuilders.TextBox)
+    .setText(``)
+    .setTextFont((font) => font.setWeight('bold').setSize(12))
 
 const t0 = window.performance.now()
 createProgressiveTraceGenerator()
     .setNumberOfPoints(dataAmountNumber)
     .generate()
     .toPromise()
-    .then(data => {
+    .then((data) => {
         const t1 = window.performance.now()
         const dGenerateData = t1 - t0
         labelGenerate.setText(`Generate ${dataAmountString} data points`)
