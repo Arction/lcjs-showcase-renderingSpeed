@@ -1,18 +1,17 @@
-import { lightningChart, emptyFill, Point, UILayoutBuilders, UIBackgrounds, UIOrigins, UIDraggingModes, SolidFill, emptyLine, UIElementBuilders, Themes, UIRectangle, UIElementColumn, UITextBox, UICheckBox } from "@arction/lcjs"
-import { createProgressiveTraceGenerator } from "@arction/xydata"
+import { disableThemeEffects, emptyFill, lightningChart, Themes, UIElementBuilders, UILayoutBuilders, UIOrigins } from "@arction/lcjs";
+import { createProgressiveTraceGenerator } from "@arction/xydata";
 
 // Use theme if provided
 const urlParams = new URLSearchParams(window.location.search);
-let theme = Themes.darkGold
-if (urlParams.get('theme') == 'light')
-    theme = Themes.lightNew
+let theme = Themes[urlParams.get("theme") as keyof Themes] || Themes.darkGold;
 
 const dataAmountNumber = 5 * 1000 * 1000
 const dataAmountString = `${dataAmountNumber / 10 ** 6}M`
 
 const chart = lightningChart().ChartXY({
     container: document.getElementById('chart-container') as HTMLDivElement,
-    theme
+    // NOTE: Effects are implemented quite performantly, but regardless, best performance is got without them.
+    theme: disableThemeEffects(theme),
 })
     .setTitleFillStyle(emptyFill)
     .setPadding({right: 40})
@@ -37,8 +36,8 @@ const positionUiLayout = () => {
     })
 }
 positionUiLayout()
-axisX.onScaleChange(positionUiLayout)
-axisY.onScaleChange(positionUiLayout)
+axisX.onIntervalChange(positionUiLayout)
+axisY.onIntervalChange(positionUiLayout)
 
 const labelGenerate = uiLayout.addElement(UIElementBuilders.TextBox).setText(`Generating ${dataAmountString} data points...`)
 const labelGenerateResult = uiLayout.addElement(UIElementBuilders.TextBox).setText(``).setTextFont((font) => font.setWeight('bold').setSize(12))
