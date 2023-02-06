@@ -8,7 +8,9 @@ let theme = Themes[urlParams.get('theme') as keyof Themes] || Themes.darkGold
 const dataAmountNumber = 5 * 1000 * 1000
 const dataAmountString = `${dataAmountNumber / 10 ** 6}M`
 
-const chart = lightningChart()
+const chart = lightningChart({
+    resourcesBaseUrl: `${window.location.origin}${window.location.pathname}resources`,
+})
     .ChartXY({
         container: document.getElementById('chart-container') as HTMLDivElement,
         // NOTE: Effects are implemented quite performantly, but regardless, best performance is got without them.
