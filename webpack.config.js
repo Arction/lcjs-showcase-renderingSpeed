@@ -10,36 +10,36 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
-                exclude: /node_modules/
-            }
-        ]
+                exclude: /node_modules/,
+            },
+        ],
     },
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
-        compress: true
+        compress: true,
     },
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
     },
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
     },
     optimization: {
         splitChunks: {
-            chunks: 'all'
-        }
+            chunks: 'all',
+        },
     },
     plugins: [
         new HtmlWebpackPlugin({
             title: 'LCJS rendering speed showcase',
-            template: './src/index.html'
+            template: './src/index.html',
         }),
         new CopyWebpackPlugin({
             patterns: [
                 { from: 'src/static', to: '' },
-                { from: 'node_modules/@arction/lcjs/dist/resources', to: 'resources' },
-            ]
-        })
-    ]
+                { from: 'node_modules/@lightningchart/lcjs/dist/resources', to: 'resources' },
+            ],
+        }),
+    ],
 }
