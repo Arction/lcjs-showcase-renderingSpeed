@@ -35,7 +35,6 @@ const series = chart
         dataPattern: 'ProgressiveX',
     })
     .setAreaFillStyle(emptyFill)
-    .setPointFillStyle(emptyFill)
     .setMaxSampleCount(dataAmountNumber)
 
 const uiLayout = chart.addUIElement(UILayoutBuilders.Column, { x: axisX, y: axisY }).setOrigin(UIOrigins.LeftTop)
@@ -46,8 +45,8 @@ const positionUiLayout = () => {
     })
 }
 positionUiLayout()
-axisX.onIntervalChange(positionUiLayout)
-axisY.onIntervalChange(positionUiLayout)
+axisX.addEventListener('intervalchange', positionUiLayout)
+axisY.addEventListener('intervalchange', positionUiLayout)
 
 const labelGenerate = uiLayout.addElement(UIElementBuilders.TextBox).setText(`Generating ${dataAmountString} data points...`)
 const labelGenerateResult = uiLayout
